@@ -6,6 +6,8 @@ static NSString *WBPreferencesPath = @"/User/Library/Preferences/com.saurik.Wint
 @property (nonatomic, strong, readonly) NSString *path;
 @property (nonatomic, assign) BOOL iconsArePrecomposed;
 
+- (instancetype)initWithPath:(NSString *)path;
+
 @end
 
 @implementation IBTheme
@@ -94,7 +96,7 @@ static UIImage* IBGetThemedIcon(NSString *displayIdentifier, int format = 0, flo
                     // format == 2 means homescreen icon
                     if (format != 2) {
                         // if not formatting for a homescreen icon, resize the image
-                        // to the correct format (namely for Notification Center)
+                        // to the correct size (namely for Notification Center)
                         UIImage *tempImage = [themedImage _applicationIconImageForFormat:format precomposed:NO scale:scale];
                         UIGraphicsBeginImageContextWithOptions(tempImage.size, NO, 0.0);
                         [themedImage drawInRect:CGRectMake(0, 0, tempImage.size.width, tempImage.size.height)];
