@@ -1,4 +1,6 @@
 IconBundles
 ===========
 
-A simplified method of theming iOS homescreen icons with WinterBoard
+A simplified method of theming iOS homescreen icons with WinterBoard.
+
+Compile using Theos (https://github.com/DHowett/theos)[https://github.com/DHowett/theos].
