@@ -135,3 +135,26 @@ static UIImage* IBGetThemedIcon(NSString *displayIdentifier, int format = 0, flo
 }
 
 %end
+
+@interface SBIcon : NSObject
+- (NSString *)applicationBundleID;
+@end
+
+@interface SBClockApplicationIconImageView : UIView
+- (SBIcon *)icon;
+@end
+
+%hook SBClockApplicationIconImageView
+
+- (id)contentsImage {
+    // Quick hack for iOS 7 "live" clock icon
+    if ([self respondsToSelector:@selector(icon)]) {
+        SBIcon *sbIcon = [self icon];
+        if (UIImage *icon = IBGetThemedIcon([sbIcon applicationBundleID]))
+            return icon;
+    }
+    
+    return %orig;
+}
+
+%end
