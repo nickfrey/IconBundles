@@ -70,21 +70,20 @@ static UIImage* IBGetThemedIcon(NSString *displayIdentifier, int format = 0, flo
     NSMutableArray *potentialFilenames = [[NSMutableArray alloc] init];
     CGFloat displayScale = (scale > 0 ? scale : [UIScreen mainScreen].scale);
     
-    while (displayScale >= 1.0) {
-        NSMutableString *filename = [NSMutableString stringWithString:displayIdentifier];
+    
+     NSMutableString *filename = [NSMutableString stringWithString:displayIdentifier];
         
-        if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
-            [filename appendString:@"~ipad"];
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
+        [filename appendString:@"~ipad"];
         
-        if (displayScale == 2.0)
-            [filename appendString:@"@2x"];
-        else if (displayScale == 3.0)
-            [filename appendString:@"@3x"];
+    if (displayScale == 2.0)
+        [filename appendString:@"@2x"];
+    else if (displayScale == 3.0)
+        [filename appendString:@"@3x"];
         
-        [filename appendString:@".png"];
-        [potentialFilenames addObject:filename];
-        displayScale--;
-    }
+    [filename appendString:@".png"];
+    [potentialFilenames addObject:filename];
+     
     
     for (IBTheme *theme in IBActiveThemes) {
         for (NSString *filename in potentialFilenames) {
