@@ -1,3 +1,5 @@
+#import <UIKit/UIKit.h>
+
 static NSMutableArray *IBActiveThemes;
 static NSString *WBPreferencesPath = @"/User/Library/Preferences/com.saurik.WinterBoard.plist";
 
