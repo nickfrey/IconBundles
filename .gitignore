@@ -2,3 +2,4 @@
 *.deb
 .theos
 .DS_Store
+theos
