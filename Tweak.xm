@@ -98,13 +98,19 @@ static UIImage* IBGetThemedIcon(NSString *displayIdentifier, int format = 0, flo
   }
   
   NSMutableArray *potentialFilenames = [[NSMutableArray alloc] init];
-  CGFloat displayScale = (scale > 0 ? scale : [UIScreen mainScreen].scale);
-  
   NSMutableString *filename = [NSMutableString stringWithString:displayIdentifier];
   
+  // Get the display scale for the users screen
+  CGFloat displayScale = (scale > 0 ? scale : [UIScreen mainScreen].scale);
+  
+  // If the users device is an iPad, simply get the correct icon for the device scale rather
+  // than trying to find all icons associated with the theme.
   if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
     [filename appendString:@"~ipad"];
     [potentialFilenames addObject:IBGetFileForIdentifier(filename, displayScale)];
+  
+  // If the users device is anything other than an iPad, find all icons for any type of device
+  // scale, whether it be @3x or @2x.
   } else {
     while (displayScale >= 1.0) {
       filename = [NSMutableString stringWithString:displayIdentifier];
@@ -113,21 +119,24 @@ static UIImage* IBGetThemedIcon(NSString *displayIdentifier, int format = 0, flo
     }
   }
   
+  // Traverse through all the known themes and return the icon as a `UIImage` instance
   for (IBTheme *theme in IBActiveThemes) {
     for (NSString *filename in potentialFilenames) {
       NSString *path = [theme.path stringByAppendingPathComponent:filename];
       
+      // If the icon doesn't exist in the path, skip it!
       if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         continue;
       }
       
+      // Create a new `UIImage` instance for the icon path
       UIImage *themedImage = [UIImage imageWithContentsOfFile:path];
       
       if (theme.iconsArePrecomposed) {
         // format == 2 means homescreen icon
         if (format != 2) {
-          // if not formatting for a homescreen icon, resize the image
-          // to the correct size (namely for Notification Center)
+          // If not formatting for a homescreen icon, resize the image to the correct size
+          // (namely for Notification Center)
           UIImage *tempImage = [themedImage _applicationIconImageForFormat:format precomposed:NO scale:scale];
           UIGraphicsBeginImageContextWithOptions(tempImage.size, NO, 0.0);
           [themedImage drawInRect:CGRectMake(0, 0, tempImage.size.width, tempImage.size.height)];
@@ -177,10 +186,11 @@ static UIImage* IBGetThemedIcon(NSString *displayIdentifier, int format = 0, flo
 %hook SBClockApplicationIconImageView
 
 - (id)contentsImage {
-  // Quick hack for iOS 7 "live" clock icon
+  // Quick hack for iOS 7 'live' clock icon
   if ([self respondsToSelector:@selector(icon)]) {
     SBIcon *sbIcon = [self icon];
     
+    // Only return an icon for the Clock App if the theme contains one for it!
     if (UIImage *icon = IBGetThemedIcon([sbIcon applicationBundleID])) {
       return icon;
     }
